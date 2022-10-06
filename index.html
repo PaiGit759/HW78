@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>HW78</title>
+    <style type="text/css">
+        body {
+            background-color: rgb(150, 150, 202);
+        }
+
+        .exsample {
+            top: 5%;
+        }
+
+        .exsample1 {
+            top: 28%;
+        }
+
+        .exsample2 {
+            top: 16%;
+        }
+
+
+        .exsample1 {
+            position: relative;
+            left: 27%;
+            top: 90px;
+            width: 35%;
+            height: 165px;
+            padding-top: 5px;
+            padding-left: 10px;
+            padding-bottom: 10px;
+            font-size: x-large;
+            margin-top: 5px;
+            text-align: justify;
+            background: lightgray;
+            border: 1px solid greenyellow;
+            border-radius: 3%;
+
+        }
+
+        .s1 {
+            color: rgb(235, 10, 10);
+        }
+
+        img {
+            position: absolute;
+            right: 2px;
+            top: 2px;
+            background-color: rgb(229, 125, 5);
+            width: 170px;
+            height: 170px;
+            border: 1px solid green;
+            border-radius: 2px;
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="exsample1" id="formForOutPut" name="form1">
+        <div>Choose file <input type="file" id="myfile"></div>
+
+        <div>
+            <button id="btn1" onclick="onClicBtn1()">Load file</button>
+        </div>
+
+    </div>
+
+    <script>
+
+        async function onClicBtn1() {
+            var file = document.getElementById("myfile");
+
+            var data = new FormData()
+            data.append('file', file.files[0]);
+            data.append('expires', '2022-10-08');
+            data.append('maxDownloads', 1);
+            data.append('autoDelete', true);
+
+            /*  var data = {
+                       file: file.files[0],//'hw75.txt', file.files[0]
+                        expires : '2022-10-07',
+                        maxDownloads: 1,
+                        autoDelete: true
+             }
+              */
+
+            let url = 'https://file.io/';
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer A2JEA7N.60T5CTV-Y9J4R1H-KQFYFSJ-PA4RFSE',
+                }
+                ,
+                body: data
+            });
+// не работает стасус возврата 500
+
+            let result = await response.json();
+
+// получим список файлов файлы добавлены вручную
+            let response1 = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer A2JEA7N.60T5CTV-Y9J4R1H-KQFYFSJ-PA4RFSE',
+                }
+
+            });
+            let result1 = await response1.json();
+            index = Number(result1.count) - 1;
+            url1 = result1.nodes[index].link;// Ссылка на последний файл в списке result1.count
+
+            // Удалим  последний файл в списке              
+                         let response2 = await fetch(url1, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                                'Authorization': 'Bearer A2JEA7N.60T5CTV-Y9J4R1H-KQFYFSJ-PA4RFSE',
+                            }
+                        });
+             
+            if(response2.ok) {
+                alert('The file ' + response2.url + 'has been deleted')
+            };
+        }        
+    </script>
+
+</body>
+
+</html>
